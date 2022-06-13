@@ -164,15 +164,14 @@ if ($^O eq 'linux') {
     closedir(IDE);
   }
 
-  # Look for SCSI / SATA drives in /sys
+# Look for SCSI / SATA drives in /sys
   my @drivesSCSI;
-  if (-d '/sys/block/') {
-    opendir(SCSI, '/sys/block/');
-    @drivesSCSI = grep /sd[a-z]/, readdir SCSI;
+  if (-d '/dev/disk/by-id/') {
+    opendir(SCSI, '/dev/disk/by-id/');
+    @drivesSCSI = `grep -v -e "wwn" -e "lvm" -e "dm-" -e "-part"`, readdir SCSI;
     closedir(SCSI);
   }
-
-  # Look for NVMe drives in /sys
+# Look for NVMe drives in /sys
   my @drivesNVME;
   if (-d '/sys/block/') {
     opendir(NVME, '/sys/block/');
